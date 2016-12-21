@@ -88,7 +88,7 @@ func strToStrNodes(s string) []string {
 	return nodes
 }
 
-func (m Markov) Generate(maxNodes int) [][]string {
+func (m Markov) Generate(maxNodes int, isTerminal func([]string) bool) [][]string {
 	if len(m.chain) == 0 {
 		return [][]string{}
 	}
@@ -100,7 +100,11 @@ func (m Markov) Generate(maxNodes int) [][]string {
 		if reflect.DeepEqual(nextNode, EOS) {
 			break
 		}
-		ans = append(ans, strNodeToSlice(nextNode))
+		nextNodeSlice := strNodeToSlice(nextNode)
+		ans = append(ans, nextNodeSlice)
+		if isTerminal(nextNodeSlice) {
+			break
+		}
 		shiftPrefix(prefix, nextNode)
 	}
 	return ans

@@ -66,7 +66,11 @@ func TestGenerate(t *testing.T) {
 	}
 	defer markov.Destroy()
 
-	markov.Generate(100)
+	everFalse := func([]string) bool {
+		return false
+	}
+
+	markov.Generate(100, everFalse)
 
 	err = markov.Add("こんにちは世界")
 	if err != nil {
@@ -80,10 +84,27 @@ func TestGenerate(t *testing.T) {
 	}
 
 	var ans []string
-	for _, v := range markov.Generate(100) {
+	for _, v := range markov.Generate(100, everFalse) {
 		ans = append(ans, v[0])
 	}
 	expected := "こんにちは世界"
+	if strings.Join(ans, "") != expected {
+		t.Errorf("expected %v, but %v", expected, ans)
+		return
+	}
+
+	endCondition := func(s []string) bool {
+		if s[0] == "こんにちは" {
+			return true
+		}
+		return false
+	}
+
+	ans = []string{}
+	for _, v := range markov.Generate(100, endCondition) {
+		ans = append(ans, v[0])
+	}
+	expected = "こんにちは"
 	if strings.Join(ans, "") != expected {
 		t.Errorf("expected %v, but %v", expected, ans)
 		return
