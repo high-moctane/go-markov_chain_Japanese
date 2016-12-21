@@ -41,6 +41,11 @@ func New(order int, args map[string]string) (*Markov, error) {
 	}, nil
 }
 
+func (m Markov) Destroy() {
+	m.mecab.Destroy()
+	m.chain = map[string][]string{}
+}
+
 func (m Markov) initialPrefix() []string {
 	prefix := make([]string, m.order)
 	for i, _ := range prefix {

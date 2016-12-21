@@ -12,6 +12,8 @@ func TestInitialPrefix(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
+	defer markov.Destroy()
+
 	prefix := markov.initialPrefix()
 	expected := []string{"\tBOS,,,,,,,,", "\tBOS,,,,,,,,"}
 	if !reflect.DeepEqual(prefix, expected) {
@@ -25,6 +27,8 @@ func TestAdd(t *testing.T) {
 		t.Errorf("unexpected error: %v", err)
 		return
 	}
+	defer markov.Destroy()
+
 	err = markov.Add("こんにちは世界")
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
@@ -60,6 +64,8 @@ func TestGenerate(t *testing.T) {
 		t.Errorf("unexpected error: %v", err)
 		return
 	}
+	defer markov.Destroy()
+
 	err = markov.Add("こんにちは世界")
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
