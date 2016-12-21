@@ -66,6 +66,8 @@ func TestGenerate(t *testing.T) {
 	}
 	defer markov.Destroy()
 
+	markov.Generate(100)
+
 	err = markov.Add("こんにちは世界")
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

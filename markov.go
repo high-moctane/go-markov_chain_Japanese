@@ -89,6 +89,9 @@ func strToStrNodes(s string) []string {
 }
 
 func (m Markov) Generate(maxNodes int) [][]string {
+	if len(m.chain) == 0 {
+		return [][]string{}
+	}
 	ans := make([][]string, 0, maxNodes)
 	prefix := m.initialPrefix()
 	for i := 0; i < maxNodes; i++ {
