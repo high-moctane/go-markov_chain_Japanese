@@ -73,9 +73,14 @@ func (m Markov) Add(s string) error {
 }
 
 func strToStrNodes(s string) []string {
-	ans := strings.Split(s, "\n")
-	ans = ans[:len(ans)-2]
-	return ans
+	nodes := strings.Split(s, "\n")
+	nodes = nodes[:len(nodes)-2]
+	for i, node := range nodes {
+		tab := strings.Split(node, "\t")
+		tab[1] = strings.Replace(tab[1], "*", "", -1)
+		nodes[i] = strings.Join(tab, "\t")
+	}
+	return nodes
 }
 
 func (m Markov) Generate(maxNodes int) [][]string {
@@ -97,12 +102,6 @@ func strNodeToSlice(s string) []string {
 	var ans = make([]string, 10)
 	tab := strings.Split(s, "\t")
 	ans[0] = tab[0]
-	for i, v := range strings.Split(tab[1], ",") {
-		if v == "*" {
-			ans[i+1] = ""
-		} else {
-			ans[i+1] = v
-		}
-	}
+	copy(ans[1:], strings.Split(tab[1], ","))
 	return ans
 }
