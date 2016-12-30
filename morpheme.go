@@ -47,3 +47,23 @@ func NewMorpheme(m MorphemeString) Morpheme {
 		Pronounciation:       ans[9],
 	}
 }
+
+func (m *Morpheme) Mora() []Mora {
+	runes := []rune(m.Pronounciation + "*")
+	ans := make([]Mora, 0, len(runes)-1)
+
+	for i, end := 0, len(runes)-1; i < end; i++ {
+		if mora, ok := katakana[string(runes[i:i+2])]; ok {
+			ans = append(ans, mora)
+			i++
+		} else if mora, ok := katakana[string(runes[i])]; ok {
+			ans = append(ans, mora)
+		} else if runes[i] == 'ー' {
+			newMora := Mora{"", ans[len(ans)-1].vowel}
+			ans = append(ans, newMora)
+		} else {
+			return []Mora{}
+		}
+	}
+	return ans
+}

@@ -35,3 +35,32 @@ func TestNewMorpheme(t *testing.T) {
 		t.Errorf("parse failed: %v", input)
 	}
 }
+
+func TestMora(t *testing.T) {
+	var input Morpheme
+	var expected []Mora
+
+	input = NewMorpheme(NewMorphemeString("	,,,,,,,,コンニチワ"))
+	expected = []Mora{{"k", "o"}, {"*n", "*n"}, {"n", "i"}, {"ch", "i"}, {"w", "a"}}
+	if !reflect.DeepEqual(input.Mora(), expected) {
+		t.Errorf("expected %v, but %v", expected, input.Mora())
+	}
+
+	input = NewMorpheme(NewMorphemeString("	,,,,,,,,バール"))
+	expected = []Mora{{"b", "a"}, {"", "a"}, {"r", "u"}}
+	if !reflect.DeepEqual(input.Mora(), expected) {
+		t.Errorf("expected %v, but %v", expected, input.Mora())
+	}
+
+	input = NewMorpheme(NewMorphemeString("	,,,,,,,,チェッカー"))
+	expected = []Mora{{"ch", "e"}, {"*xtu", "*xtu"}, {"k", "a"}, {"", "a"}}
+	if !reflect.DeepEqual(input.Mora(), expected) {
+		t.Errorf("expected %v, but %v", expected, input.Mora())
+	}
+
+	input = NewMorpheme(NewMorphemeString("	,,,,,,,,シューズ"))
+	expected = []Mora{{"sh", "u"}, {"", "u"}, {"z", "u"}}
+	if !reflect.DeepEqual(input.Mora(), expected) {
+		t.Errorf("expected %v, but %v", expected, input.Mora())
+	}
+}
