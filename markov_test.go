@@ -56,7 +56,7 @@ func TestGenerate(t *testing.T) {
 	}
 	defer markov.Destroy()
 
-	everFalse := func([]string) bool {
+	everFalse := func(Morpheme) bool {
 		return false
 	}
 
@@ -75,7 +75,7 @@ func TestGenerate(t *testing.T) {
 
 	var ans []string
 	for _, v := range markov.Generate(100, everFalse) {
-		ans = append(ans, v[0])
+		ans = append(ans, v.OriginalForm)
 	}
 	expected := "こんにちは世界"
 	if strings.Join(ans, "") != expected {
@@ -83,8 +83,8 @@ func TestGenerate(t *testing.T) {
 		return
 	}
 
-	endCondition := func(s []string) bool {
-		if s[0] == "こんにちは" {
+	endCondition := func(m Morpheme) bool {
+		if m.OriginalForm == "こんにちは" {
 			return true
 		}
 		return false
@@ -92,7 +92,7 @@ func TestGenerate(t *testing.T) {
 
 	ans = []string{}
 	for _, v := range markov.Generate(100, endCondition) {
-		ans = append(ans, v[0])
+		ans = append(ans, v.OriginalForm)
 	}
 	expected = "こんにちは"
 	if strings.Join(ans, "") != expected {
@@ -121,7 +121,7 @@ func BenchmarkAdd(b *testing.B) {
 func BenchmarkGenerate(b *testing.B) {
 	rand.Seed(0)
 
-	everFalse := func([]string) bool {
+	everFalse := func(Morpheme) bool {
 		return false
 	}
 

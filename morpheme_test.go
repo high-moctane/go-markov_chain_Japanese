@@ -24,13 +24,13 @@ func TestNewMorpheme(t *testing.T) {
 	var expect Morpheme
 
 	input = NewMorphemeString("こんにちは	感動詞,,,,,,こんにちは,コンニチハ,コンニチワ")
-	expect = Morpheme([]string{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"})
+	expect = Morpheme(Morpheme{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "コンニチハ", "コンニチワ"})
 	if !reflect.DeepEqual(NewMorpheme(input), expect) {
 		t.Errorf("parse failed: %v", input)
 	}
 
 	input = NewMorphemeString("こんにちは	感動詞,,,,,,こんにちは")
-	expect = Morpheme([]string{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "", ""})
+	expect = Morpheme(Morpheme{"こんにちは", "感動詞", "", "", "", "", "", "こんにちは", "", ""})
 	if !reflect.DeepEqual(NewMorpheme(input), expect) {
 		t.Errorf("parse failed: %v", input)
 	}

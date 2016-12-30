@@ -78,7 +78,7 @@ func makeMorphemes(s string) []MorphemeString {
 	return ans
 }
 
-func (m *Markov) Generate(maxNodes int, isTerminal func([]string) bool) []Morpheme {
+func (m *Markov) Generate(maxNodes int, isTerminal func(Morpheme) bool) []Morpheme {
 	if len(m.data.Chain) == 0 {
 		return []Morpheme{}
 	}
@@ -90,9 +90,9 @@ func (m *Markov) Generate(maxNodes int, isTerminal func([]string) bool) []Morphe
 		if nextNode == EOS {
 			break
 		}
-		nextNodeSlice := nextNode.Morpheme()
-		ans = append(ans, nextNodeSlice)
-		if isTerminal(nextNodeSlice) {
+		nextMorpheme := nextNode.Morpheme()
+		ans = append(ans, nextMorpheme)
+		if isTerminal(nextMorpheme) {
 			break
 		}
 		prefix.Shift(nextNode)

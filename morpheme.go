@@ -2,21 +2,20 @@ package markov
 
 import "strings"
 
-const (
-	OriginalForm = iota
-	PartOfSpeech
-	PartOfSpeechSection1
-	PartOfSpeechSection2
-	PartOfSpeechSection3
-	ConjugatedForm1
-	ConjugatedForm2
-	Inflection
-	Reading
-	Pronounciation
-)
-
 type MorphemeString string
-type Morpheme []string
+
+type Morpheme struct {
+	OriginalForm         string
+	PartOfSpeech         string
+	PartOfSpeechSection1 string
+	PartOfSpeechSection2 string
+	PartOfSpeechSection3 string
+	ConjugatedForm1      string
+	ConjugatedForm2      string
+	Inflection           string
+	Reading              string
+	Pronounciation       string
+}
 
 func NewMorphemeString(s string) MorphemeString {
 	tab := strings.Split(s, "\t")
@@ -35,5 +34,16 @@ func NewMorpheme(m MorphemeString) Morpheme {
 	tab := strings.Split(string(m), "\t")
 	ans[0] = tab[0]
 	copy(ans[1:], strings.Split(tab[1], ","))
-	return ans
+	return Morpheme{
+		OriginalForm:         ans[0],
+		PartOfSpeech:         ans[1],
+		PartOfSpeechSection1: ans[2],
+		PartOfSpeechSection2: ans[3],
+		PartOfSpeechSection3: ans[4],
+		ConjugatedForm1:      ans[5],
+		ConjugatedForm2:      ans[6],
+		Inflection:           ans[7],
+		Reading:              ans[8],
+		Pronounciation:       ans[9],
+	}
 }
