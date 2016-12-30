@@ -3,7 +3,6 @@ package markov
 import (
 	"errors"
 	"math/rand"
-	"reflect"
 	"strings"
 	"time"
 
@@ -16,9 +15,8 @@ const (
 )
 
 type Markov struct {
-	order int
 	mecab mecab.MeCab
-	chain map[string][]string
+	data  Data
 }
 
 func init() {
@@ -35,29 +33,19 @@ func New(order int, args map[string]string) (*Markov, error) {
 	}
 
 	return &Markov{
-		order: order,
 		mecab: tagger,
-		chain: map[string][]string{},
+		data: Data{
+			MarkovArgs:  args,
+			Order:       order,
+			firstPrefix: firstPrefix(order),
+			Chain:       map[string][]MorphemeString{},
+		},
 	}, nil
 }
 
-func (m Markov) Destroy() {
+func (m *Markov) Destroy() {
 	m.mecab.Destroy()
-	m.chain = map[string][]string{}
-}
-
-func (m Markov) initialPrefix() []string {
-	prefix := make([]string, m.order)
-	for i, _ := range prefix {
-		prefix[i] = BOS
-	}
-	return prefix
-}
-
-func shiftPrefix(prefix []string, node string) {
-	copy(prefix, prefix[1:])
-	prefix[len(prefix)-1] = node
-
+	m.data = Data{}
 }
 
 func (m Markov) Add(s string) error {
@@ -65,55 +53,49 @@ func (m Markov) Add(s string) error {
 	if err != nil {
 		return err
 	}
-	nodes := strToStrNodes(parsedStr)
-	prefix := m.initialPrefix()
+	nodes := makeMorphemes(parsedStr)
+	prefix := m.data.FirstPrefix()
 	for _, node := range nodes {
-		key := strings.Join(prefix, "\n")
-		m.chain[key] = append(m.chain[key], node)
-		shiftPrefix(prefix, node)
+		key := prefix.String()
+		m.data.Chain[key] = append(m.data.Chain[key], node)
+		prefix.Shift(node)
 	}
-	key := strings.Join(prefix, "\n")
-	m.chain[key] = append(m.chain[key], EOS)
+	key := prefix.String()
+	m.data.Chain[key] = append(m.data.Chain[key], EOS)
 	return nil
 }
 
-func strToStrNodes(s string) []string {
+func makeMorphemes(s string) []MorphemeString {
 	nodes := strings.Split(s, "\n")
 	nodes = nodes[:len(nodes)-2]
+	ans := make([]MorphemeString, len(nodes))
 	for i, node := range nodes {
 		tab := strings.Split(node, "\t")
 		tab[1] = strings.Replace(tab[1], "*", "", -1)
 		nodes[i] = strings.Join(tab, "\t")
-	}
-	return nodes
-}
-
-func (m Markov) Generate(maxNodes int, isTerminal func([]string) bool) [][]string {
-	if len(m.chain) == 0 {
-		return [][]string{}
-	}
-	ans := make([][]string, 0, maxNodes)
-	prefix := m.initialPrefix()
-	for i := 0; i < maxNodes; i++ {
-		candidate := m.chain[strings.Join(prefix, "\n")]
-		nextNode := candidate[rand.Intn(len(candidate))]
-		if reflect.DeepEqual(nextNode, EOS) {
-			break
-		}
-		nextNodeSlice := strNodeToSlice(nextNode)
-		ans = append(ans, nextNodeSlice)
-		if isTerminal(nextNodeSlice) {
-			break
-		}
-		shiftPrefix(prefix, nextNode)
+		ans[i] = MorphemeString(nodes[i])
 	}
 	return ans
 }
 
-func strNodeToSlice(s string) []string {
-	var ans = make([]string, 10)
-	tab := strings.Split(s, "\t")
-	ans[0] = tab[0]
-	copy(ans[1:], strings.Split(tab[1], ","))
+func (m *Markov) Generate(maxNodes int, isTerminal func([]string) bool) [][]string {
+	if len(m.data.Chain) == 0 {
+		return [][]string{}
+	}
+	ans := make([][]string, 0, maxNodes)
+	prefix := m.data.FirstPrefix()
+	for i := 0; i < maxNodes; i++ {
+		candidate := m.data.Chain[prefix.String()]
+		nextNode := candidate[rand.Intn(len(candidate))]
+		if nextNode == EOS {
+			break
+		}
+		nextNodeSlice := nextNode.Morpheme()
+		ans = append(ans, nextNodeSlice)
+		if isTerminal(nextNodeSlice) {
+			break
+		}
+		prefix.Shift(nextNode)
+	}
 	return ans
 }
