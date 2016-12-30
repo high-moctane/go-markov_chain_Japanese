@@ -78,11 +78,11 @@ func makeMorphemes(s string) []MorphemeString {
 	return ans
 }
 
-func (m *Markov) Generate(maxNodes int, isTerminal func([]string) bool) [][]string {
+func (m *Markov) Generate(maxNodes int, isTerminal func([]string) bool) []Morpheme {
 	if len(m.data.Chain) == 0 {
-		return [][]string{}
+		return []Morpheme{}
 	}
-	ans := make([][]string, 0, maxNodes)
+	ans := make([]Morpheme, 0, maxNodes)
 	prefix := m.data.FirstPrefix()
 	for i := 0; i < maxNodes; i++ {
 		candidate := m.data.Chain[prefix.String()]
