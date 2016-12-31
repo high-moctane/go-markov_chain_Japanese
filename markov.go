@@ -4,6 +4,7 @@ import (
 	"errors"
 	"math/rand"
 	"strings"
+	"sync"
 	"time"
 
 	mecab "github.com/shogo82148/go-mecab"
@@ -16,6 +17,7 @@ const (
 
 type Markov struct {
 	mecab mecab.MeCab
+	mutex sync.Mutex
 	data  Data
 }
 
@@ -55,6 +57,9 @@ func (m Markov) Add(s string) error {
 	}
 	nodes := makeMorphemes(parsedStr)
 	prefix := m.data.FirstPrefix()
+
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
 	for _, node := range nodes {
 		key := prefix.String()
 		m.data.Chain[key] = append(m.data.Chain[key], node)
