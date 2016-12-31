@@ -9,9 +9,13 @@ func (p Phrase) OriginalForm() (ans string) {
 	return
 }
 
-func (p Phrase) Pronounciation() (ans string) {
+func (p Phrase) Pronounciation() (string, bool) {
+	var ans string
 	for _, v := range p {
+		if v.Pronounciation == "" {
+			return "", false
+		}
 		ans += v.Pronounciation
 	}
-	return
+	return ans, true
 }
