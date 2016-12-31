@@ -35,10 +35,10 @@ func New(order int, args map[string]string) (*Markov, error) {
 	return &Markov{
 		mecab: tagger,
 		data: Data{
-			MarkovArgs:  args,
-			Order:       order,
-			firstPrefix: firstPrefix(order),
-			Chain:       map[string][]MorphemeString{},
+			MarkovArgs:       args,
+			Order:            order,
+			FirstPrefixField: firstPrefix(order),
+			Chain:            map[string][]MorphemeString{},
 		},
 	}, nil
 }
