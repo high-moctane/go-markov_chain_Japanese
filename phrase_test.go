@@ -15,7 +15,7 @@ func TestPhrase(t *testing.T) {
 	var expected Phrase
 
 	parsed, _ = mecab.Parse("こんにちは世界")
-	phraseString = makePhraseString(parsed)
+	phraseString = MakePhraseString(parsed)
 	expected = Phrase{
 		{
 			OriginalForm:         "こんにちは",
@@ -53,7 +53,7 @@ func TestMorae(t *testing.T) {
 	mecab, _ := mecab.New(map[string]string{})
 
 	parsed, _ := mecab.Parse("こんにちは世界")
-	phrase = PhraseString(makePhraseString(parsed)).Phrase()
+	phrase = PhraseString(MakePhraseString(parsed)).Phrase()
 	expected = []Mora{
 		{"k", "o"}, {"*n", "*n"}, {"n", "i"}, {"ch", "i"}, {"w", "a"},
 		{"s", "e"}, {"k", "a"}, {"", "i"},

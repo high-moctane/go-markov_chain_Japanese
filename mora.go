@@ -41,11 +41,11 @@ var (
 )
 
 type Mora struct {
-	consonant string
-	vowel     string
+	Consonant string
+	Vowel     string
 }
 
 type MoraWeight struct {
-	consonant float64
-	vowel     float64
+	Consonant float64
+	Vowel     float64
 }

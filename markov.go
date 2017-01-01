@@ -55,7 +55,7 @@ func (m Markov) Add(s string) error {
 	if err != nil {
 		return err
 	}
-	nodes := makePhraseString(parsedStr)
+	nodes := MakePhraseString(parsedStr)
 	prefix := m.data.FirstPrefix()
 
 	m.mutex.Lock()
@@ -70,7 +70,7 @@ func (m Markov) Add(s string) error {
 	return nil
 }
 
-func makePhraseString(s string) []MorphemeString {
+func MakePhraseString(s string) PhraseString {
 	nodes := strings.Split(s, "\n")
 	nodes = nodes[:len(nodes)-2]
 	ans := make([]MorphemeString, len(nodes))

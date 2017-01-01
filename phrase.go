@@ -44,7 +44,7 @@ func (p Phrase) Morae() ([]Mora, bool) {
 		} else if mora, ok := katakana[string(runes[i])]; ok {
 			ans = append(ans, mora)
 		} else if runes[i] == 'ー' {
-			newMora := Mora{"", ans[len(ans)-1].vowel}
+			newMora := Mora{"", ans[len(ans)-1].Vowel}
 			ans = append(ans, newMora)
 		} else {
 			return []Mora{}, false
