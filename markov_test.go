@@ -35,12 +35,12 @@ func TestAdd(t *testing.T) {
 		"こんにちは	感動詞,,,,,,こんにちは,コンニチハ,コンニチワ\n世界	名詞,一般,,,,,世界,セカイ,セカイ": []MorphemeString{"\tEOS,,,,,,,,"},
 		"こんにちは	感動詞,,,,,,こんにちは,コンニチハ,コンニチワ\n宇宙	名詞,一般,,,,,宇宙,ウチュウ,ウチュー": []MorphemeString{"\tEOS,,,,,,,,"},
 	}
-	if !reflect.DeepEqual(markov.data.Chain, expected) {
+	if !reflect.DeepEqual(markov.Data.Chain, expected) {
 		t.Errorf("expected\n%sv, but\n%s.", pp.Sprint(expected), pp.Sprint(markov))
 	}
-	for k, v := range markov.data.Chain {
+	for k, v := range markov.Data.Chain {
 		if !reflect.DeepEqual(expected[k], v) {
-			t.Errorf("expected\n%v, but\n%v.", expected, markov.data.Chain)
+			t.Errorf("expected\n%v, but\n%v.", expected, markov.Data.Chain)
 			return
 		}
 	}

@@ -16,9 +16,9 @@ const (
 )
 
 type Markov struct {
-	mecab mecab.MeCab
-	mutex sync.Mutex
-	data  Data
+	MeCab mecab.MeCab
+	Mutex sync.Mutex
+	Data  Data
 }
 
 func init() {
@@ -35,8 +35,8 @@ func New(order int, args map[string]string) (*Markov, error) {
 	}
 
 	return &Markov{
-		mecab: tagger,
-		data: Data{
+		MeCab: tagger,
+		Data: Data{
 			MarkovArgs:       args,
 			Order:            order,
 			FirstPrefixField: firstPrefix(order),
@@ -46,27 +46,27 @@ func New(order int, args map[string]string) (*Markov, error) {
 }
 
 func (m *Markov) Destroy() {
-	m.mecab.Destroy()
-	m.data = Data{}
+	m.MeCab.Destroy()
+	m.Data = Data{}
 }
 
 func (m Markov) Add(s string) error {
-	parsedStr, err := m.mecab.Parse(s)
+	parsedStr, err := m.MeCab.Parse(s)
 	if err != nil {
 		return err
 	}
 	nodes := MakePhraseString(parsedStr)
-	prefix := m.data.FirstPrefix()
+	prefix := m.Data.FirstPrefix()
 
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
 	for _, node := range nodes {
 		key := prefix.String()
-		m.data.Chain[key] = append(m.data.Chain[key], node)
+		m.Data.Chain[key] = append(m.Data.Chain[key], node)
 		prefix.Shift(node)
 	}
 	key := prefix.String()
-	m.data.Chain[key] = append(m.data.Chain[key], EOS)
+	m.Data.Chain[key] = append(m.Data.Chain[key], EOS)
 	return nil
 }
 
@@ -84,13 +84,13 @@ func MakePhraseString(s string) PhraseString {
 }
 
 func (m *Markov) Generate(maxNodes int, isTerminal func(Morpheme) bool) Phrase {
-	if len(m.data.Chain) == 0 {
+	if len(m.Data.Chain) == 0 {
 		return Phrase{}
 	}
 	ans := make(Phrase, 0, maxNodes)
-	prefix := m.data.FirstPrefix()
+	prefix := m.Data.FirstPrefix()
 	for i := 0; i < maxNodes; i++ {
-		candidate := m.data.Chain[prefix.String()]
+		candidate := m.Data.Chain[prefix.String()]
 		nextNode := candidate[rand.Intn(len(candidate))]
 		if nextNode == EOS {
 			break
