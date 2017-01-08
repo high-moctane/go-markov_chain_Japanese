@@ -46,21 +46,3 @@ func TestPhrase(t *testing.T) {
 		t.Errorf("expected %v, but %v", expected, phraseString.Phrase())
 	}
 }
-
-func TestMorae(t *testing.T) {
-	var phrase Phrase
-	var expected []Mora
-	mecab, _ := mecab.New(map[string]string{})
-
-	parsed, _ := mecab.Parse("こんにちは世界")
-	phrase = PhraseString(MakePhraseString(parsed)).Phrase()
-	expected = []Mora{
-		{"k", "o"}, {"*n", "*n"}, {"n", "i"}, {"ch", "i"}, {"w", "a"},
-		{"s", "e"}, {"k", "a"}, {"", "i"},
-	}
-
-	morae, _ := phrase.Morae()
-	if !reflect.DeepEqual(morae, expected) {
-		t.Errorf("expected %v, but %v", expected, morae)
-	}
-}
