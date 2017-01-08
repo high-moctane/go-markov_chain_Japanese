@@ -28,27 +28,3 @@ func (p Phrase) Pronounciation() (string, bool) {
 	}
 	return ans, true
 }
-
-func (p Phrase) Morae() ([]Mora, bool) {
-	pron, ok := p.Pronounciation()
-	if !ok {
-		return []Mora{}, false
-	}
-	runes := []rune(pron + "*")
-	ans := make([]Mora, 0, len(runes)-1)
-
-	for i, end := 0, len(runes)-1; i < end; i++ {
-		if mora, ok := katakana[string(runes[i:i+2])]; ok {
-			ans = append(ans, mora)
-			i++
-		} else if mora, ok := katakana[string(runes[i])]; ok {
-			ans = append(ans, mora)
-		} else if runes[i] == 'ー' {
-			newMora := Mora{"", ans[len(ans)-1].Vowel}
-			ans = append(ans, newMora)
-		} else {
-			return []Mora{}, false
-		}
-	}
-	return ans, true
-}
