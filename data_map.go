@@ -74,10 +74,16 @@ func (d *DataMap) Add(ps mecabs.PhraseString) {
 }
 
 func (d *DataMap) Generate(length int) mecabs.PhraseString {
+again:
 	ans := make(mecabs.PhraseString, 0, length)
 	prefix := d.firstPrefix()
 	for i := 0; i < length; i++ {
-		candidate := d.Chain[prefix.string()]
+		candidate, ok := d.Chain[prefix.string()]
+		if !ok {
+			// NOTE: 普通 candidate が存在しないことはないが、
+			// go-rapbot のためにエラー処理を書いた
+			goto again
+		}
 		next := candidate[rand.Intn(len(candidate))]
 		if next == mecabs.EOMS {
 			return ans
